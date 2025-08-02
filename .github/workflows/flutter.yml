@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -13,18 +13,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Verify repository structure
+        run: |
+          ls -la
+          if [ ! -d "rezappid" ]; then
+            echo "::error::Directory 'rezappid' not found!"
+            exit 1
+          fi
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.32.8'
-          channel: 'stable'  # Tambahkan channel untuk memastikan
-
-      - name: Verify Flutter installation
-        run: flutter doctor -v
+          channel: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
-        working-directory: ./rezappid  # Pastikan path ini benar
+        working-directory: rezappid  # Hanya nama folder, tanpa ./
 
       - name: Decode keystore
         run: |
@@ -33,7 +38,6 @@ jobs:
 
       - name: Setup key.properties
         run: |
-          mkdir -p rezappid/android/app
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" > rezappid/android/app/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> rezappid/android/app/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> rezappid/android/app/key.properties
@@ -41,7 +45,7 @@ jobs:
 
       - name: Build release APK
         run: flutter build apk --release
-        working-directory: ./rezappid
+        working-directory: rezappid
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

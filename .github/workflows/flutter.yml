@@ -16,7 +16,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
+          flutter-version: '3.10.5'  # versi Flutter stabil valid
 
       - name: Install dependencies
         run: flutter pub get
@@ -26,10 +26,10 @@ jobs:
 
       - name: Setup key.properties
         run: |
-          echo "storePassword=$STORE_PASSWORD" > android/app/key.properties
-          echo "keyPassword=$KEY_PASSWORD" >> android/app/key.properties
-          echo "keyAlias=$KEY_ALIAS" >> android/app/key.properties
-          echo "storeFile=android/app/release-key.jks" >> android/app/key.properties
+          echo "storePassword=$STORE_PASSWORD" > android/key.properties
+          echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+          echo "storeFile=app/release-key.jks" >> android/key.properties
 
       - name: Build release APK
         run: flutter build apk --release

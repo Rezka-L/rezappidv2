@@ -16,7 +16,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.8'
+          channel: master  # Pakai channel master biar support Dart 3.8.1
 
       - name: Install dependencies
         run: flutter pub get

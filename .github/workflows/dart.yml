@@ -1,4 +1,4 @@
-name: Flutter CI
+name: Dart/Flutter Build
 
 on:
   push:
@@ -13,26 +13,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.10'   # ganti versi sesuai Flutter stable terbaru
-          cache: true
+          flutter-version: 'stable'
 
-      - name: Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
-      - name: Analyze code
+      - name: Run analyzer
         run: flutter analyze
 
       - name: Run tests
         run: flutter test
 
-      - name: Build APK
+      - name: Build APK (release)
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
+          name: app-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk

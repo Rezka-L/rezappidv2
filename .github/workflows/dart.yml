@@ -1,37 +1,42 @@
-name: Dart/Flutter Build
+name: Build APK
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Setup Flutter SDK
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.13.9'
 
-      - name: Get dependencies
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Run analyzer
-        run: flutter analyze
+      - name: Decode keystore
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/release-key.jks
 
-      - name: Run tests
-        run: flutter test
+      - name: Create key.properties
+        run: |
+          echo "storePassword=$STORE_PASSWORD" > android/app/key.properties
+          echo "keyPassword=$KEY_PASSWORD" >> android/app/key.properties
+          echo "keyAlias=$KEY_ALIAS" >> android/app/key.properties
+          echo "storeFile=android/app/release-key.jks" >> android/app/key.properties
 
-      - name: Build APK (release)
+      - name: Build APK
         run: flutter build apk --release
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
+          name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk

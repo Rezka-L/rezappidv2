@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -17,24 +17,31 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.32.8'
+          channel: 'stable'  # Tambahkan channel untuk memastikan
+
+      - name: Verify Flutter installation
+        run: flutter doctor -v
 
       - name: Install dependencies
         run: flutter pub get
-        working-directory: rezappid
+        working-directory: ./rezappid  # Pastikan path ini benar
 
       - name: Decode keystore
-        run: echo "$KEYSTORE_BASE64" | base64 -d > rezappid/android/app/release-key.jks
+        run: |
+          mkdir -p rezappid/android/app
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > rezappid/android/app/release-key.jks
 
       - name: Setup key.properties
         run: |
-          echo "storePassword=$STORE_PASSWORD" > rezappid/android/app/key.properties
-          echo "keyPassword=$KEY_PASSWORD" >> rezappid/android/app/key.properties
-          echo "keyAlias=$KEY_ALIAS" >> rezappid/android/app/key.properties
-          echo "storeFile=rezappid/android/app/release-key.jks" >> rezappid/android/app/key.properties
+          mkdir -p rezappid/android/app
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" > rezappid/android/app/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> rezappid/android/app/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> rezappid/android/app/key.properties
+          echo "storeFile=release-key.jks" >> rezappid/android/app/key.properties
 
       - name: Build release APK
         run: flutter build apk --release
-        working-directory: rezappid
+        working-directory: ./rezappid
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

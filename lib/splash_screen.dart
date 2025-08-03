@@ -165,9 +165,9 @@ class _LoadingDotsModernState extends State<LoadingDotsModern> with SingleTicker
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
             foreground: Paint()
-              ..shader = LinearGradient(
+              ..shader = const LinearGradient(
              colors: [Colors.blueAccent, Colors.lightBlueAccent],
-              ).createShader(Rect.fromLTWH(0, 0, 80, 20)),
+              ).createShader(const Rect.fromLTWH(0, 0, 80, 20)),
           ),
         );
       },

@@ -23,7 +23,7 @@ const List<Game> games = [
     image: 'assets/images/ff.png',
   ),
   Game(
-    id: 'pubgm',
+    id: 'pubg',
     name: 'PUBG Mobile',
     image: 'assets/images/pubg.png',
   ),

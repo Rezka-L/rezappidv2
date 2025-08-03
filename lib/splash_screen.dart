@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
     _logoCtrl.forward();
 
     // Setelah splash 4 detik lanjut ke login
-    _timer = Timer(const Duration(seconds: 4), () {
+    _timer = Timer(const Duration(seconds: 5), () {
       context.go('/login');
     });
   }
@@ -166,7 +166,7 @@ class _LoadingDotsModernState extends State<LoadingDotsModern> with SingleTicker
             letterSpacing: 1.5,
             foreground: Paint()
               ..shader = const LinearGradient(
-             colors: [Colors.blueAccent, Colors.lightBlueAccent],
+             colors: [Color.fromARGB(255, 50, 52, 56), Color.fromARGB(255, 50, 52, 53)],
               ).createShader(const Rect.fromLTWH(0, 0, 80, 20)),
           ),
         );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // â ini WAJIB ditambah
 import 'package:go_router/go_router.dart';
-import '../models/game.dart';
+import 'models/game.dart';
 
 class TopUpPage extends StatefulWidget {
   final Game game;
@@ -75,16 +76,18 @@ class _TopUpPageState extends State<TopUpPage> {
               child: Image.asset(widget.game.image, height: 180),
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _idController,
-              decoration: InputDecoration(
-                labelText: 'Player ID',
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+       TextField(
+  controller: _idController,
+  keyboardType: TextInputType.number,
+  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+  decoration: InputDecoration(
+    labelText: 'Player ID',
+    filled: true,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+  ),
+),
             const SizedBox(height: 20),
             Text('Pilih Nominal', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 10),

@@ -1,4 +1,4 @@
-package com.rezkaid
+package com.rezid
 
 import io.flutter.embedding.android.FlutterActivity
 

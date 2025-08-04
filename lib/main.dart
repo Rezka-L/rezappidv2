@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 
 import 'splash_screen.dart';
 import 'login_page.dart';
 import 'username_page.dart';
 import 'home_page.dart';
 import 'topup_page.dart';
-import 'models/game.dart'; // import class Game dan const games
+import 'models/game.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const RezidApp());
 }
 
@@ -21,10 +28,7 @@ class RezidApp extends StatefulWidget {
 
 class _RezidAppState extends State<RezidApp> {
   DateTime? _lastBackPressed;
-
   late final GoRouter router;
-
-  // Pakai list games yang sudah didefinisikan di game.dart
   final List<Game> gameList = games;
 
   @override
@@ -33,6 +37,20 @@ class _RezidAppState extends State<RezidApp> {
 
     router = GoRouter(
       initialLocation: '/',
+      redirect: (context, state) {
+        final user = FirebaseAuth.instance.currentUser;
+        final isLoggingIn = state.uri.path == '/login';
+
+        if (user == null && !isLoggingIn) {
+          return '/login';
+        }
+
+        if (user != null && isLoggingIn) {
+          return '/home';
+        }
+
+        return null;
+      },
       routes: [
         GoRoute(
           path: '/',
@@ -61,7 +79,7 @@ class _RezidAppState extends State<RezidApp> {
             Game? selectedGame;
             try {
               selectedGame = gameList.firstWhere((g) => g.id == gameId);
-            } catch (e) {
+            } catch (_) {
               selectedGame = null;
             }
 
@@ -95,8 +113,9 @@ class _RezidAppState extends State<RezidApp> {
 
             if (currentLocation != '/home') {
               router.go('/home');
-              if (resultSetter != null) {
-                (resultSetter as void Function(bool))(false);
+              // Periksa dulu tipe resultSetter dan panggil dengan aman
+              if (resultSetter != null && resultSetter is void Function(bool)) {
+                resultSetter(false);
               }
               return;
             }
@@ -110,38 +129,19 @@ class _RezidAppState extends State<RezidApp> {
                   content: Text('Tekan sekali lagi untuk keluar aplikasi'),
                 ),
               );
-              if (resultSetter != null) {
-                (resultSetter as void Function(bool))(false);
+              if (resultSetter != null && resultSetter is void Function(bool)) {
+                resultSetter(false);
               }
               return;
             }
 
-            if (resultSetter != null) {
-              (resultSetter as void Function(bool))(true);
+            if (resultSetter != null && resultSetter is void Function(bool)) {
+              resultSetter(true);
             }
           },
           child: child!,
         );
       },
     );
-  }
-
-  Future<void> _onWillPop() async {
-    final router = GoRouter.of(context);
-    if (router.routerDelegate.currentConfiguration.uri.toString() != '/home') {
-      router.go('/home');
-      return;
-    }
-
-    if (_lastBackPressed == null ||
-        DateTime.now().difference(_lastBackPressed!) >
-            const Duration(seconds: 2)) {
-      _lastBackPressed = DateTime.now();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tekan sekali lagi untuk keluar aplikasi')),
-      );
-      return;
-    }
-    // SystemNavigator.pop(); // uncomment kalau mau langsung keluar
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AnimatedBackground extends StatefulWidget {
   const AnimatedBackground({super.key});
@@ -18,7 +20,6 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       duration: const Duration(seconds: 6),
       vsync: this,
@@ -49,7 +50,10 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [_color1.value ?? Colors.blue, _color2.value ?? Colors.purple],
+              colors: [
+                _color1.value ?? Colors.blue,
+                _color2.value ?? Colors.purple
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -63,13 +67,36 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      context.go('/username');
+    } catch (e) {
+      debugPrint("Google sign in error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login gagal: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          const AnimatedBackground(), // animasi background warna bergerak
-
+          const AnimatedBackground(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
@@ -94,9 +121,7 @@ class LoginPage extends StatelessWidget {
                 const Spacer(),
                 SignInButton(
                   Buttons.Google,
-                  onPressed: () {
-                    context.go('/username');
-                  },
+                  onPressed: () => signInWithGoogle(context),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(

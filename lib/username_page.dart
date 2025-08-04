@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
 class UsernamePage extends StatefulWidget {
@@ -8,11 +10,11 @@ class UsernamePage extends StatefulWidget {
   State<UsernamePage> createState() => _UsernamePageState();
 }
 
-class _UsernamePageState extends State<UsernamePage>
-    with SingleTickerProviderStateMixin {
+class _UsernamePageState extends State<UsernamePage> with SingleTickerProviderStateMixin {
   final TextEditingController _usernameController = TextEditingController();
   String? _errorText;
   bool _isButtonEnabled = false;
+  bool _isLoading = false;
 
   late AnimationController _animationController;
   late Animation<double> _glowAnimation;
@@ -48,16 +50,65 @@ class _UsernamePageState extends State<UsernamePage>
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final username = _usernameController.text.trim();
+
     if (username.isEmpty) {
       setState(() => _errorText = 'Masukkan username dulu ya');
-    } else if (username.length < 3) {
+      return;
+    }
+    if (username.length < 3) {
       setState(() => _errorText = 'Minimal 3 karakter');
-    } else if (username.contains(' ')) {
+      return;
+    }
+    if (username.contains(' ')) {
       setState(() => _errorText = 'Tidak boleh ada spasi');
-    } else {
-      context.go('/home', extra: username);
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorText = null;
+    });
+
+    try {
+      final usersCollection = FirebaseFirestore.instance.collection('users');
+
+      // Cek apakah username sudah ada
+      final query = await usersCollection.where('username', isEqualTo: username).get();
+      if (query.docs.isNotEmpty) {
+        setState(() {
+          _errorText = 'Username sudah digunakan';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Simpan username dengan uid user yang sudah login
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        setState(() {
+          _errorText = 'User belum login';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      await usersCollection.doc(user.uid).set({
+        'username': username,
+        'uid': user.uid,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // Berhasil, lanjut ke home
+      if (mounted) {
+        context.go('/home', extra: username);
+      }
+    } catch (e) {
+      setState(() {
+        _errorText = 'Terjadi kesalahan: $e';
+        _isLoading = false;
+      });
     }
   }
 
@@ -156,7 +207,7 @@ class _UsernamePageState extends State<UsernamePage>
                           width: double.infinity,
                           height: 48,
                           child: ElevatedButton(
-                            onPressed: _isButtonEnabled ? _submit : null,
+                            onPressed: _isButtonEnabled && !_isLoading ? _submit : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: accentColor,
                               foregroundColor: Colors.white,
@@ -165,13 +216,15 @@ class _UsernamePageState extends State<UsernamePage>
                               ),
                               elevation: 6,
                             ),
-                            child: const Text(
-                              'Continue',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                            child: _isLoading
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : const Text(
+                                    'Continue',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -185,4 +238,4 @@ class _UsernamePageState extends State<UsernamePage>
       ),
     );
   }
-    }
+}

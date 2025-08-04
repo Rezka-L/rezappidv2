@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "873612404237",
+    "project_id": "betarezv1",
+    "storage_bucket": "betarezv1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873612404237:android:9c2f1ca1eb43d969859744",
+        "android_client_info": {
+          "package_name": "com.example.rezappid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-0ciQ0XT45AAujYJyMP0u1AW_2LiyvBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -23,10 +23,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.rezappid"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // Gunakan applicationId sesuai dengan nama yang kamu daftarkan di Firebase Console
+        applicationId = "com.rezkaid"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -35,8 +33,7 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Gunakan debug signing sementara agar `flutter run --release` tidak error
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -44,4 +41,14 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Gunakan Firebase BoM agar semua versi library saling kompatibel
+    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+
+    // Tambahkan Firebase SDK sesuai kebutuhan
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-firestore")
 }

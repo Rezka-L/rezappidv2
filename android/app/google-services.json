@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:873612404237:android:9c2f1ca1eb43d969859744",
+        "mobilesdk_app_id": "1:873612404237:android:a0a5dd7b1ed4f632859744",
         "android_client_info": {
-          "package_name": "com.example.rezappid"
+          "package_name": "com.rezid"
         }
       },
       "oauth_client": [],

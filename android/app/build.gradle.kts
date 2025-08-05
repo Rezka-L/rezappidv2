@@ -25,8 +25,8 @@ android {
     defaultConfig {
         // Gunakan applicationId sesuai dengan nama yang kamu daftarkan di Firebase Console
         applicationId = "com.rezid"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 23
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

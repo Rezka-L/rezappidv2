@@ -12,7 +12,20 @@
           "package_name": "com.rezid"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "873612404237-11j01565bod8eod01cf1ft3megujp0po.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rezid",
+            "certificate_hash": "f7a3a4885e5ff72b90ae12c195475689ea8876a3"
+          }
+        },
+        {
+          "client_id": "873612404237-4189je8bp6ajn4q5gs39p6cfdfv8k8as.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA-0ciQ0XT45AAujYJyMP0u1AW_2LiyvBM"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "873612404237-4189je8bp6ajn4q5gs39p6cfdfv8k8as.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "873612404237-m01poqiro6ud05784dr7t9e85fkessev.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rezid"
+              }
+            }
+          ]
         }
       }
     }
